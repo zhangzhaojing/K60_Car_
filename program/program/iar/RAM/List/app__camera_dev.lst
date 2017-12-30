@@ -1,0 +1,170 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V8.10.1.12857/W32 for ARM       24/Dec/2017  19:52:24
+# Copyright 1999-2017 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\app\app__camera_dev.c
+#    Command line =  
+#        -f C:\Users\19071_~1\AppData\Local\Temp\EW9730.tmp
+#        (C:\Users\19071_000\Desktop\K60_Car\program\program\app\app__camera_dev.c
+#        -D LPLD_K60 -D USE_K60DZ10 -lCN
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\RAM\List -lB
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\RAM\List -o
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\RAM\Obj
+#        --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa
+#        --no_clustering --no_scheduling --debug --endian=little
+#        --cpu=Cortex-M4 -e --fpu=None --dlib_config "C:\Program Files
+#        (x86)\IAR Systems\Embedded Workbench
+#        8.0\arm\INC\c\DLib_Config_Normal.h" -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\app\ -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\CPU\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\common\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\LPLD\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\LPLD\HW\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\LPLD\DEV\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\LPLD\FUNC\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\uCOS-II\Ports\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\uCOS-II\Source\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\FatFs\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\FatFs\option\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\USB\common\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\USB\driver\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\USB\descriptor\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\USB\class\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\peripheral\
+#        -Ol -I "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.0\arm\CMSIS\Include\" -D ARM_MATH_CM4)
+#    Locale       =  C
+#    List file    =  
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\RAM\List\app__camera_dev.lst
+#    Object file  =  
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\RAM\Obj\app__camera_dev.o
+#
+###############################################################################
+
+C:\Users\19071_000\Desktop\K60_Car\program\program\app\app__camera_dev.c
+      1          #include "program.h"
+      2          
+      3          #if 1
+      4          
+      5          /* 摄像头引脚配置信息和摄像头单例 */
+      6          static camera_cfg_t camcfg={
+      7              {PTE, GPIO_Pin10, 10}, {PTE, GPIO_Pin12, 12},/* scl, sda */
+      8          	PTD, GPIO_Pin14/* vsync */, GPIO_Pin13/* href */,
+      9              {PTE, GPIO_Pin0_7, 0}, /* d0 - d7 */
+     10              {PTD, GPIO_Pin12, 12}, /* pclk */
+     11              0, /* DMA_CHx */
+     12          };
+     13          static uint8_t camera_buff_data[320*240/8];
+     14          static void show_and_send_image(void);
+     15          static camera_t camera = {
+     16              {240, 320, camera_buff_data},/* compressed buff */
+     17              show_and_send_image, /* callback function */
+     18          };
+     19          
+     20          /* OLED引脚配置信息和OLED单例 */
+     21          static oled_cfg_t oled_cfg={
+     22          	{PTD, GPIO_Pin1, 1},//scl
+     23          	{PTD, GPIO_Pin3, 3},//sda
+     24          	{PTC, GPIO_Pin15, 15},//rst
+     25          	{PTD, GPIO_Pin2, 2},//dc
+     26          	{PTD, GPIO_Pin4, 4}//cs
+     27          };
+     28          static oled_t oled;
+     29          
+     30          /* OLED 图像实时预览区域 */
+     31          static uint8_t preview_buff[48*64];
+     32          static image_t preview_img = {48, 64, preview_buff};
+     33          static image_region_t preview_imgreg = {0, 48, 0, 64, &preview_img};
+     34          static oled_region_t preview_oledreg = {0, 0, 6, 64};
+     35          
+     36          /* OLED 状态栏文字区域 */
+     37          static oled_region_t status_oledreg = {7, 0, 1, 80};
+     38          #define OLED_status_bar(str) OLED__show_text(&status_oledreg, str, 1, 0)
+     39          
+     40          /* 图像发送串口配置 */
+     41          static UART_InitTypeDef img_uart_init = {UART0, 115200, PTA14, PTA15};
+     42          
+     43          /* 按键配置及实例枚举 */
+     44          typedef enum {KEY_UP, KEY_DOWN, KEY_CENTER, KEY_LEFT, KEY_RIGHT, KEY_LEN} key_t;
+     45          static gpio_cfg_t keys_cfg[KEY_LEN] = {
+     46              {PTD, GPIO_Pin11, 11}, {PTD, GPIO_Pin7, 7}, {PTD, GPIO_Pin9, 9}, {PTD, GPIO_Pin8, 8}, {PTD, GPIO_Pin10, 10}
+     47          };
+     48          static char * key_chr = "UDCLR";
+     49          static oled_region_t keystat_oledreg = {7, 85, 1, 6*7};
+     50          static void OLED_update_keystat(void){
+     51              static char str[KEY_LEN+1];
+     52              sprintf(str, "[%c%c%c%c%c]",
+     53                      (_DI(keys_cfg[KEY_UP])?' ':key_chr[KEY_UP]),
+     54                      (_DI(keys_cfg[KEY_DOWN])?' ':key_chr[KEY_DOWN]),
+     55                      (_DI(keys_cfg[KEY_CENTER])?' ':key_chr[KEY_CENTER]),
+     56                      (_DI(keys_cfg[KEY_LEFT])?' ':key_chr[KEY_LEFT]),
+     57                      (_DI(keys_cfg[KEY_RIGHT])?' ':key_chr[KEY_RIGHT])
+     58                      );
+     59              OLED__show_text(&keystat_oledreg, str, 0, 0);
+     60          }
+     61          static void keys_gpio_init(void){
+     62              GPIO_InitTypeDef gpio_init;
+     63              uint8 i;
+     64              gpio_init.GPIO_Dir = DIR_INPUT;
+     65              gpio_init.GPIO_PinControl = INPUT_PULL_DIS|IRQC_DIS;
+     66              for(i=0; i<KEY_LEN; i++){
+     67                  gpio_init.GPIO_PTx = keys_cfg[i].PTx;
+     68                  gpio_init.GPIO_Pins = keys_cfg[i].GPIO_Pinn;
+     69                  LPLD_GPIO_Init(gpio_init);
+     70              }
+     71          }
+     72          #define key_is_pressed(kid) (!_DI(keys_cfg[kid]))
+     73          
+     74          /* 图像处理回调函数 */
+     75          static void show_and_send_image(void){
+     76              image__uncompress(&(camera.buff), &preview_img);
+     77              OLED__show_img(&preview_oledreg, &preview_imgreg, 1, 1);
+     78              OLED_update_keystat();
+     79              if(key_is_pressed(KEY_CENTER)){
+     80                  dummy_delay_ms(10);
+     81                  if(key_is_pressed(KEY_CENTER)){
+     82                      OLED_status_bar("SEND IMG..");
+     83                      LPLD_UART_PutCharArr(img_uart_init.UART_Uartx, camera_buff_data, camera.buff.nrows*camera.buff.ncols/8);
+     84                      OLED_status_bar("READY");
+     85                  }
+     86              }
+     87              camera__take_a_photo_please();
+     88          }
+     89          
+     90          /* 应用主程序 */
+     91          extern void app__camera_dev(void){
+     92              //OLED__init(&oled_cfg, &oled);
+     93              //OLED_status_bar("INIT UART..");
+     94              //LPLD_UART_Init(img_uart_init);
+     95              //OLED_status_bar("INIT KEYS..");
+     96              //keys_gpio_init();
+     97              //OLED_status_bar("INIT CAM..");
+     98              camera__config(&camcfg, &camera);
+     99              //OLED_status_bar("READY");
+    100              while(1);
+    101          }
+    102          
+    103          #else
+    104          extern void app__camera_dev(void){}
+    105          #endif
+
+Errors: 9
+Warnings: 8

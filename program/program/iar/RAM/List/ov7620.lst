@@ -1,0 +1,619 @@
+###############################################################################
+#
+# IAR ANSI C/C++ Compiler V8.10.1.12857/W32 for ARM       30/Dec/2017  19:25:56
+# Copyright 1999-2017 IAR Systems AB.
+#
+#    Cpu mode     =  thumb
+#    Endian       =  little
+#    Source file  =  C:\Users\19071_000\Desktop\K60_Car\lib\peripheral\ov7620.c
+#    Command line =  
+#        -f C:\Users\19071_~1\AppData\Local\Temp\EWEBC7.tmp
+#        (C:\Users\19071_000\Desktop\K60_Car\lib\peripheral\ov7620.c -D
+#        LPLD_K60 -D USE_K60DZ10 -lCN
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\RAM\List -lB
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\RAM\List -o
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\RAM\Obj
+#        --no_cse --no_unroll --no_inline --no_code_motion --no_tbaa
+#        --no_clustering --no_scheduling --debug --endian=little
+#        --cpu=Cortex-M4 -e --fpu=None --dlib_config "C:\Program Files
+#        (x86)\IAR Systems\Embedded Workbench
+#        8.0\arm\INC\c\DLib_Config_Normal.h" -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\app\ -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\CPU\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\common\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\LPLD\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\LPLD\HW\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\LPLD\DEV\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\LPLD\FUNC\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\uCOS-II\Ports\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\uCOS-II\Source\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\FatFs\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\FatFs\option\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\USB\common\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\USB\driver\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\USB\descriptor\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\USB\class\
+#        -I
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\..\..\..\lib\peripheral\
+#        -Ol -I "C:\Program Files (x86)\IAR Systems\Embedded Workbench
+#        8.0\arm\CMSIS\Include\" -D ARM_MATH_CM4)
+#    Locale       =  C
+#    List file    =  
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\RAM\List\ov7620.lst
+#    Object file  =  
+#        C:\Users\19071_000\Desktop\K60_Car\program\program\iar\RAM\Obj\ov7620.o
+#
+###############################################################################
+
+C:\Users\19071_000\Desktop\K60_Car\lib\peripheral\ov7620.c
+      1          #include "ov7620.h"
+
+   \                                 In section .text, align 2, keep-with-next
+   \   static __interwork __softfp void __NVIC_DisableIRQ(IRQn_Type)
+   \                     __NVIC_DisableIRQ: (+1)
+   \   00000000   0xB240             SXTB     R0,R0            ;; SignExt  R0,R0,#+24,#+24
+   \   00000002   0x2800             CMP      R0,#+0
+   \   00000004   0xD408             BMI.N    ??__NVIC_DisableIRQ_0
+   \   00000006   0x2201             MOVS     R2,#+1
+   \   00000008   0xF010 0x011F      ANDS     R1,R0,#0x1F
+   \   0000000C   0x408A             LSLS     R2,R2,R1
+   \   0000000E   0x....             LDR.N    R1,??DataTable5  ;; 0xe000e180
+   \   00000010   0xB240             SXTB     R0,R0            ;; SignExt  R0,R0,#+24,#+24
+   \   00000012   0x0940             LSRS     R0,R0,#+5
+   \   00000014   0xF841 0x2020      STR      R2,[R1, R0, LSL #+2]
+   \                     ??__NVIC_DisableIRQ_0: (+1)
+   \   00000018   0x4770             BX       LR               ;; return
+      2          #include "DEV_SCCB.h"
+      3          
+      4          #define H_MAX 240//hangshu
+      5          #define L_MAX 320//lieshu
+      6          
+
+   \                                 In section .bss, align 1
+      7          static boolean acq_flag;
+   \                     acq_flag:
+   \   00000000                      DS8 1
+
+   \                                 In section .bss, align 4
+      8          static uint32 vsync_cnt, href_cnt, rowacq_cnt;
+   \                     vsync_cnt:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 4
+   \                     href_cnt:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 4
+   \                     rowacq_cnt:
+   \   00000000                      DS8 4
+
+   \                                 In section .bss, align 4
+      9          static uint8 Pix_Data[H_MAX*L_MAX];
+   \                     Pix_Data:
+   \   00000000                      DS8 76800
+     10          
+
+   \                                 In section .text, align 2, keep-with-next
+     11          static void vsync_isr(){
+     12              if(LPLD_GPIO_IsPinxExt(PORTD, GPIO_Pin14))
+   \                     vsync_isr: (+1)
+   \   00000000   0x....             LDR.N    R0,??DataTable5_1  ;; 0x4004c0a0
+   \   00000002   0x6800             LDR      R0,[R0, #+0]
+   \   00000004   0x0440             LSLS     R0,R0,#+17
+   \   00000006   0xD513             BPL.N    ??vsync_isr_0
+     13            {
+     14              LPLD_DMA_LoadDstAddr(DMA_CH0, Pix_Data);
+   \   00000008   0x....             LDR.N    R0,??DataTable5_2
+   \   0000000A   0x....             LDR.N    R1,??DataTable5_3  ;; 0x40009010
+   \   0000000C   0x6008             STR      R0,[R1, #+0]
+     15              LPLD_DMA_LoadSrcAddr(DMA_CH0, &PTE->PDIR);
+   \   0000000E   0x....             LDR.N    R0,??DataTable5_4  ;; 0x400ff110
+   \   00000010   0x....             LDR.N    R1,??DataTable5_5  ;; 0x40009000
+   \   00000012   0x6008             STR      R0,[R1, #+0]
+     16              vsync_cnt++;//当前场数
+   \   00000014   0x....             LDR.N    R0,??DataTable5_6
+   \   00000016   0x6800             LDR      R0,[R0, #+0]
+   \   00000018   0x1C40             ADDS     R0,R0,#+1
+   \   0000001A   0x....             LDR.N    R1,??DataTable5_6
+   \   0000001C   0x6008             STR      R0,[R1, #+0]
+     17              href_cnt=0;
+   \   0000001E   0x2000             MOVS     R0,#+0
+   \   00000020   0x....             LDR.N    R1,??DataTable5_7
+   \   00000022   0x6008             STR      R0,[R1, #+0]
+     18              rowacq_cnt=0;
+   \   00000024   0x2000             MOVS     R0,#+0
+   \   00000026   0x....             LDR.N    R1,??DataTable5_8
+   \   00000028   0x6008             STR      R0,[R1, #+0]
+     19              acq_flag=TRUE;
+   \   0000002A   0x2001             MOVS     R0,#+1
+   \   0000002C   0x....             LDR.N    R1,??DataTable5_9
+   \   0000002E   0x7008             STRB     R0,[R1, #+0]
+     20            }
+     21          }
+   \                     ??vsync_isr_0: (+1)
+   \   00000030   0x4770             BX       LR               ;; return
+     22          
+
+   \                                 In section .text, align 2, keep-with-next
+     23          static void href_isr(){
+     24              if(LPLD_GPIO_IsPinxExt(PORTD, GPIO_Pin13))
+   \                     href_isr: (+1)
+   \   00000000   0x....             LDR.N    R0,??DataTable5_1  ;; 0x4004c0a0
+   \   00000002   0x6800             LDR      R0,[R0, #+0]
+   \   00000004   0x0480             LSLS     R0,R0,#+18
+   \   00000006   0xD50E             BPL.N    ??href_isr_0
+     25            {
+     26              if(acq_flag){
+   \   00000008   0x....             LDR.N    R0,??DataTable5_9
+   \   0000000A   0x7800             LDRB     R0,[R0, #+0]
+   \   0000000C   0x2800             CMP      R0,#+0
+   \   0000000E   0xD00A             BEQ.N    ??href_isr_0
+     27              LPLD_DMA_EnableReq(DMA_CH0);
+   \   00000010   0x....             LDR.N    R0,??DataTable5_10  ;; 0x4000800c
+   \   00000012   0x6800             LDR      R0,[R0, #+0]
+   \   00000014   0xF050 0x0001      ORRS     R0,R0,#0x1
+   \   00000018   0x....             LDR.N    R1,??DataTable5_10  ;; 0x4000800c
+   \   0000001A   0x6008             STR      R0,[R1, #+0]
+     28              href_cnt++;
+   \   0000001C   0x....             LDR.N    R0,??DataTable5_7
+   \   0000001E   0x6800             LDR      R0,[R0, #+0]
+   \   00000020   0x1C40             ADDS     R0,R0,#+1
+   \   00000022   0x....             LDR.N    R1,??DataTable5_7
+   \   00000024   0x6008             STR      R0,[R1, #+0]
+     29              }
+     30            }
+     31          }
+   \                     ??href_isr_0: (+1)
+   \   00000026   0x4770             BX       LR               ;; return
+     32          
+
+   \                                 In section .text, align 2, keep-with-next
+     33          static void row_finish(){
+   \                     row_finish: (+1)
+   \   00000000   0xB580             PUSH     {R7,LR}
+     34            rowacq_cnt++;
+   \   00000002   0x....             LDR.N    R0,??DataTable5_8
+   \   00000004   0x6800             LDR      R0,[R0, #+0]
+   \   00000006   0x1C40             ADDS     R0,R0,#+1
+   \   00000008   0x....             LDR.N    R1,??DataTable5_8
+   \   0000000A   0x6008             STR      R0,[R1, #+0]
+     35            if(rowacq_cnt==H_MAX){
+   \   0000000C   0x....             LDR.N    R0,??DataTable5_8
+   \   0000000E   0x6800             LDR      R0,[R0, #+0]
+   \   00000010   0x28F0             CMP      R0,#+240
+   \   00000012   0xD105             BNE.N    ??row_finish_0
+     36               acq_flag = FALSE;
+   \   00000014   0x2000             MOVS     R0,#+0
+   \   00000016   0x....             LDR.N    R1,??DataTable5_9
+   \   00000018   0x7008             STRB     R0,[R1, #+0]
+     37               disable_irq(PORTD_IRQn);
+   \   0000001A   0x205A             MOVS     R0,#+90
+   \   0000001C   0x.... 0x....      BL       __NVIC_DisableIRQ
+     38            }
+     39          }
+   \                     ??row_finish_0: (+1)
+   \   00000020   0xBD01             POP      {R0,PC}          ;; return
+     40          
+
+   \                                 In section .text, align 2, keep-with-next
+     41          void camera__take_a_photo_please(){
+     42              if(acq_flag == TRUE) return;
+   \                     camera__take_a_photo_please: (+1)
+   \   00000000   0x....             LDR.N    R0,??DataTable5_9
+   \   00000002   0x7800             LDRB     R0,[R0, #+0]
+   \   00000004   0x2801             CMP      R0,#+1
+   \   00000006   0xD003             BEQ.N    ??camera__take_a_photo_please_0
+     43              LPLD_GPIO_ClearIntFlag(PORTD);
+   \                     ??camera__take_a_photo_please_1: (+1)
+   \   00000008   0xF05F 0x30FF      MOVS     R0,#-1
+   \   0000000C   0x....             LDR.N    R1,??DataTable5_1  ;; 0x4004c0a0
+   \   0000000E   0x6008             STR      R0,[R1, #+0]
+     44             // enable_irq(PORTD_IRQn);
+     45          }
+   \                     ??camera__take_a_photo_please_0: (+1)
+   \   00000010   0x4770             BX       LR               ;; return
+     46          
+
+   \                                 In section .text, align 2, keep-with-next
+     47          void ov7620__config(){
+   \                     ov7620__config: (+1)
+   \   00000000   0xB500             PUSH     {LR}
+   \   00000002   0xB093             SUB      SP,SP,#+76
+     48              GPIO_InitTypeDef gpio_init={0};
+   \   00000004   0xA801             ADD      R0,SP,#+4
+   \   00000006   0x2114             MOVS     R1,#+20
+   \   00000008   0x.... 0x....      BL       __aeabi_memclr4
+     49              DMA_InitTypeDef  dma_init={0};
+   \   0000000C   0xA807             ADD      R0,SP,#+28
+   \   0000000E   0x212C             MOVS     R1,#+44
+   \   00000010   0x.... 0x....      BL       __aeabi_memclr4
+     50              
+     51              LPLD_SCCB_Init();
+   \   00000014   0x.... 0x....      BL       LPLD_SCCB_Init
+     52              
+     53              // init vsync 
+     54              gpio_init.GPIO_PTx = PTD;
+   \   00000018   0x....             LDR.N    R0,??DataTable5_11  ;; 0x400ff0c0
+   \   0000001A   0x9001             STR      R0,[SP, #+4]
+     55              gpio_init.GPIO_Pins = GPIO_Pin14;
+   \   0000001C   0xF44F 0x4080      MOV      R0,#+16384
+   \   00000020   0x9002             STR      R0,[SP, #+8]
+     56              gpio_init.GPIO_Dir = DIR_INPUT; 
+   \   00000022   0x2000             MOVS     R0,#+0
+   \   00000024   0xF88D 0x0010      STRB     R0,[SP, #+16]
+     57              gpio_init.GPIO_Isr = vsync_isr;
+   \   00000028   0x....             LDR.N    R0,??DataTable5_12
+   \   0000002A   0x9005             STR      R0,[SP, #+20]
+     58              gpio_init.GPIO_PinControl = INPUT_PULL_DOWN|IRQC_FA;
+   \   0000002C   0x....             LDR.N    R0,??DataTable5_13  ;; 0xa0002
+   \   0000002E   0x9003             STR      R0,[SP, #+12]
+     59              LPLD_GPIO_Init(gpio_init);
+   \   00000030   0xA901             ADD      R1,SP,#+4
+   \   00000032   0xB084             SUB      SP,SP,#+16
+   \   00000034   0x4668             MOV      R0,SP
+   \   00000036   0x2214             MOVS     R2,#+20
+   \   00000038   0x.... 0x....      BL       __aeabi_memcpy4
+   \   0000003C   0xBC0F             POP      {R0-R3}
+   \   0000003E   0x.... 0x....      BL       LPLD_GPIO_Init
+     60              
+     61              // init href
+     62              gpio_init.GPIO_PTx = PTD;
+   \   00000042   0x....             LDR.N    R0,??DataTable5_11  ;; 0x400ff0c0
+   \   00000044   0x9001             STR      R0,[SP, #+4]
+     63              gpio_init.GPIO_Pins = GPIO_Pin13;
+   \   00000046   0xF44F 0x5000      MOV      R0,#+8192
+   \   0000004A   0x9002             STR      R0,[SP, #+8]
+     64              gpio_init.GPIO_Dir = DIR_INPUT; 
+   \   0000004C   0x2000             MOVS     R0,#+0
+   \   0000004E   0xF88D 0x0010      STRB     R0,[SP, #+16]
+     65              gpio_init.GPIO_Isr = href_isr;
+   \   00000052   0x....             LDR.N    R0,??DataTable5_14
+   \   00000054   0x9005             STR      R0,[SP, #+20]
+     66              gpio_init.GPIO_PinControl = INPUT_PULL_UP|IRQC_RI;
+   \   00000056   0x....             LDR.N    R0,??DataTable5_15  ;; 0x90003
+   \   00000058   0x9003             STR      R0,[SP, #+12]
+     67              LPLD_GPIO_Init(gpio_init);    
+   \   0000005A   0xA901             ADD      R1,SP,#+4
+   \   0000005C   0xB084             SUB      SP,SP,#+16
+   \   0000005E   0x4668             MOV      R0,SP
+   \   00000060   0x2214             MOVS     R2,#+20
+   \   00000062   0x.... 0x....      BL       __aeabi_memcpy4
+   \   00000066   0xBC0F             POP      {R0-R3}
+   \   00000068   0x.... 0x....      BL       LPLD_GPIO_Init
+     68             ///////////////////////////////////// disable_irq()
+     69              
+     70              // init pclk
+     71              gpio_init.GPIO_PTx = PTD;
+   \   0000006C   0x....             LDR.N    R0,??DataTable5_11  ;; 0x400ff0c0
+   \   0000006E   0x9001             STR      R0,[SP, #+4]
+     72              gpio_init.GPIO_Pins = GPIO_Pin12;
+   \   00000070   0xF44F 0x5080      MOV      R0,#+4096
+   \   00000074   0x9002             STR      R0,[SP, #+8]
+     73              gpio_init.GPIO_Dir = DIR_INPUT; 
+   \   00000076   0x2000             MOVS     R0,#+0
+   \   00000078   0xF88D 0x0010      STRB     R0,[SP, #+16]
+     74              gpio_init.GPIO_Isr = NULL;
+   \   0000007C   0x2000             MOVS     R0,#+0
+   \   0000007E   0x9005             STR      R0,[SP, #+20]
+     75              gpio_init.GPIO_PinControl = INPUT_PULL_UP|IRQC_DMARI;
+   \   00000080   0x....             LDR.N    R0,??DataTable5_16  ;; 0x10003
+   \   00000082   0x9003             STR      R0,[SP, #+12]
+     76              LPLD_GPIO_Init(gpio_init);  
+   \   00000084   0xA901             ADD      R1,SP,#+4
+   \   00000086   0xB084             SUB      SP,SP,#+16
+   \   00000088   0x4668             MOV      R0,SP
+   \   0000008A   0x2214             MOVS     R2,#+20
+   \   0000008C   0x.... 0x....      BL       __aeabi_memcpy4
+   \   00000090   0xBC0F             POP      {R0-R3}
+   \   00000092   0x.... 0x....      BL       LPLD_GPIO_Init
+     77              
+     78              // init d0-d7
+     79              gpio_init.GPIO_PTx = PTE;      
+   \   00000096   0x....             LDR.N    R0,??DataTable5_17  ;; 0x400ff100
+   \   00000098   0x9001             STR      R0,[SP, #+4]
+     80              gpio_init.GPIO_Pins = GPIO_Pin0_7;     
+   \   0000009A   0x20FF             MOVS     R0,#+255
+   \   0000009C   0x9002             STR      R0,[SP, #+8]
+     81              gpio_init.GPIO_Dir = DIR_INPUT;        
+   \   0000009E   0x2000             MOVS     R0,#+0
+   \   000000A0   0xF88D 0x0010      STRB     R0,[SP, #+16]
+     82              gpio_init.GPIO_Isr = NULL;
+   \   000000A4   0x2000             MOVS     R0,#+0
+   \   000000A6   0x9005             STR      R0,[SP, #+20]
+     83              gpio_init.GPIO_PinControl = INPUT_PULL_DOWN|IRQC_DIS;   
+   \   000000A8   0x2002             MOVS     R0,#+2
+   \   000000AA   0x9003             STR      R0,[SP, #+12]
+     84              LPLD_GPIO_Init(gpio_init);
+   \   000000AC   0xA901             ADD      R1,SP,#+4
+   \   000000AE   0xB084             SUB      SP,SP,#+16
+   \   000000B0   0x4668             MOV      R0,SP
+   \   000000B2   0x2214             MOVS     R2,#+20
+   \   000000B4   0x.... 0x....      BL       __aeabi_memcpy4
+   \   000000B8   0xBC0F             POP      {R0-R3}
+   \   000000BA   0x.... 0x....      BL       LPLD_GPIO_Init
+     85                 
+     86              //配置接收DMA
+     87              dma_init.DMA_CHx = DMA_CH0; 
+   \   000000BE   0x2000             MOVS     R0,#+0
+   \   000000C0   0xF88D 0x001C      STRB     R0,[SP, #+28]
+     88              dma_init.DMA_MajorLoopCnt   = L_MAX; 
+   \   000000C4   0xF44F 0x70A0      MOV      R0,#+320
+   \   000000C8   0xF8AD 0x0020      STRH     R0,[SP, #+32]
+     89              dma_init.DMA_MinorByteCnt   = 1; 
+   \   000000CC   0x2001             MOVS     R0,#+1
+   \   000000CE   0x9009             STR      R0,[SP, #+36]
+     90              dma_init.DMA_MajorCompleteIntEnable = TRUE; 
+   \   000000D0   0x2001             MOVS     R0,#+1
+   \   000000D2   0xF88D 0x0041      STRB     R0,[SP, #+65]
+     91              dma_init.DMA_Req            = PORTE_DMAREQ; 
+   \   000000D6   0x2035             MOVS     R0,#+53
+   \   000000D8   0xF88D 0x001D      STRB     R0,[SP, #+29]
+     92              
+     93              dma_init.DMA_DestAddr       = (uint32)Pix_Data; 
+   \   000000DC   0x....             LDR.N    R0,??DataTable5_2
+   \   000000DE   0x900D             STR      R0,[SP, #+52]
+     94              dma_init.DMA_DestAddrOffset = 1;                
+   \   000000E0   0x2001             MOVS     R0,#+1
+   \   000000E2   0xF8AD 0x003A      STRH     R0,[SP, #+58]
+     95              dma_init.DMA_DestDataSize   = DMA_DST_8BIT;     
+   \   000000E6   0x2000             MOVS     R0,#+0
+   \   000000E8   0xF88D 0x0038      STRB     R0,[SP, #+56]
+     96              
+     97              dma_init.DMA_SourceAddr     = (uint32)&PTE->PDIR;
+   \   000000EC   0x....             LDR.N    R0,??DataTable5_4  ;; 0x400ff110
+   \   000000EE   0x900A             STR      R0,[SP, #+40]
+     98              dma_init.DMA_SourceDataSize = DMA_SRC_8BIT;   
+   \   000000F0   0x2000             MOVS     R0,#+0
+   \   000000F2   0xF88D 0x002C      STRB     R0,[SP, #+44]
+     99              
+    100              dma_init.DMA_AutoDisableReq = TRUE;            
+   \   000000F6   0x2001             MOVS     R0,#+1
+   \   000000F8   0xF88D 0x0040      STRB     R0,[SP, #+64]
+    101              dma_init.DMA_Isr = row_finish; /////
+   \   000000FC   0x....             LDR.N    R0,??DataTable5_18
+   \   000000FE   0x9011             STR      R0,[SP, #+68]
+    102              
+    103              LPLD_DMA_Init(dma_init); 
+   \   00000100   0xA907             ADD      R1,SP,#+28
+   \   00000102   0xB084             SUB      SP,SP,#+16
+   \   00000104   0x4668             MOV      R0,SP
+   \   00000106   0x222C             MOVS     R2,#+44
+   \   00000108   0x.... 0x....      BL       __aeabi_memcpy4
+   \   0000010C   0xBC0F             POP      {R0-R3}
+   \   0000010E   0x.... 0x....      BL       LPLD_DMA_Init
+    104              //LPLD_DMA_DisableReq(DMA_CH0);
+    105              //LPLD_DMA_EnableReq(DMA_CH0);
+    106              LPLD_DMA_EnableIrq(dma_init);
+   \   00000112   0xA907             ADD      R1,SP,#+28
+   \   00000114   0xB084             SUB      SP,SP,#+16
+   \   00000116   0x4668             MOV      R0,SP
+   \   00000118   0x222C             MOVS     R2,#+44
+   \   0000011A   0x.... 0x....      BL       __aeabi_memcpy4
+   \   0000011E   0xBC0F             POP      {R0-R3}
+   \   00000120   0x.... 0x....      BL       LPLD_DMA_EnableIrq
+    107              
+    108              ///////////////
+    109              vsync_cnt=0;
+   \   00000124   0x2000             MOVS     R0,#+0
+   \   00000126   0x....             LDR.N    R1,??DataTable5_6
+   \   00000128   0x6008             STR      R0,[R1, #+0]
+    110              acq_flag=0;
+   \   0000012A   0x2000             MOVS     R0,#+0
+   \   0000012C   0x....             LDR.N    R1,??DataTable5_9
+   \   0000012E   0x7008             STRB     R0,[R1, #+0]
+    111          }
+   \   00000130   0xB013             ADD      SP,SP,#+76
+   \   00000132   0xBD00             POP      {PC}             ;; return
+
+   \                                 In section .rodata, align 4
+   \   00000000   0x00000000         DC32 0H
+   \   00000004   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+
+   \                                 In section .rodata, align 4
+   \   00000000   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00         
+   \   00000011   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \   00000021   0x00 0x00          DC8 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00 0x00    
+   \              0x00         
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable5:
+   \   00000000   0xE000E180         DC32     0xe000e180
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable5_1:
+   \   00000000   0x4004C0A0         DC32     0x4004c0a0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable5_2:
+   \   00000000   0x........         DC32     Pix_Data
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable5_3:
+   \   00000000   0x40009010         DC32     0x40009010
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable5_4:
+   \   00000000   0x400FF110         DC32     0x400ff110
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable5_5:
+   \   00000000   0x40009000         DC32     0x40009000
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable5_6:
+   \   00000000   0x........         DC32     vsync_cnt
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable5_7:
+   \   00000000   0x........         DC32     href_cnt
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable5_8:
+   \   00000000   0x........         DC32     rowacq_cnt
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable5_9:
+   \   00000000   0x........         DC32     acq_flag
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable5_10:
+   \   00000000   0x4000800C         DC32     0x4000800c
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable5_11:
+   \   00000000   0x400FF0C0         DC32     0x400ff0c0
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable5_12:
+   \   00000000   0x........         DC32     vsync_isr
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable5_13:
+   \   00000000   0x000A0002         DC32     0xa0002
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable5_14:
+   \   00000000   0x........         DC32     href_isr
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable5_15:
+   \   00000000   0x00090003         DC32     0x90003
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable5_16:
+   \   00000000   0x00010003         DC32     0x10003
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable5_17:
+   \   00000000   0x400FF100         DC32     0x400ff100
+
+   \                                 In section .text, align 4, keep-with-next
+   \                     ??DataTable5_18:
+   \   00000000   0x........         DC32     row_finish
+    112          
+    113          
+    114          
+    115          
+    116          
+    117          
+    118          
+    119          
+    120          
+    121          
+    122          
+    123          
+    124          
+    125          
+    126          
+    127          
+    128          
+    129          
+    130          
+    131          
+
+   Maximum stack usage in bytes:
+
+   .cstack Function
+   ------- --------
+       0   __NVIC_DisableIRQ
+       0   camera__take_a_photo_please
+       0   href_isr
+      96   ov7620__config
+        80   -> LPLD_DMA_EnableIrq
+        80   -> LPLD_DMA_Init
+        80   -> LPLD_GPIO_Init
+        80   -> LPLD_SCCB_Init
+        80   -> __aeabi_memclr4
+        96   -> __aeabi_memcpy4
+       8   row_finish
+         8   -> __NVIC_DisableIRQ
+       0   vsync_isr
+
+
+   Section sizes:
+
+   Bytes  Function/Label
+   -----  --------------
+       4  ??DataTable5
+       4  ??DataTable5_1
+       4  ??DataTable5_10
+       4  ??DataTable5_11
+       4  ??DataTable5_12
+       4  ??DataTable5_13
+       4  ??DataTable5_14
+       4  ??DataTable5_15
+       4  ??DataTable5_16
+       4  ??DataTable5_17
+       4  ??DataTable5_18
+       4  ??DataTable5_2
+       4  ??DataTable5_3
+       4  ??DataTable5_4
+       4  ??DataTable5_5
+       4  ??DataTable5_6
+       4  ??DataTable5_7
+       4  ??DataTable5_8
+       4  ??DataTable5_9
+      20  ?_0
+      44  ?_1
+   76800  Pix_Data
+      26  __NVIC_DisableIRQ
+       1  acq_flag
+      18  camera__take_a_photo_please
+       4  href_cnt
+      40  href_isr
+     308  ov7620__config
+      34  row_finish
+       4  rowacq_cnt
+       4  vsync_cnt
+      50  vsync_isr
+
+ 
+ 76 813 bytes in section .bss
+     64 bytes in section .rodata
+    552 bytes in section .text
+ 
+    552 bytes of CODE  memory
+     64 bytes of CONST memory
+ 76 813 bytes of DATA  memory
+
+Errors: none
+Warnings: none
