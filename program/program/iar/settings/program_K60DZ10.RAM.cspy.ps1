@@ -23,9 +23,9 @@ param([String]$debugfile = "");
 
 if ($debugfile -eq "")
 {
-& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\19071_000\Desktop\K60_Car\program\program\iar\settings\program_K60DZ10.RAM.general.xcl" --backend -f "C:\Users\19071_000\Desktop\K60_Car\program\program\iar\settings\program_K60DZ10.RAM.driver.xcl" 
+& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "F:\新建文件夹\K60_Car\program\program\iar\settings\program_K60DZ10.RAM.general.xcl" --backend -f "F:\新建文件夹\K60_Car\program\program\iar\settings\program_K60DZ10.RAM.driver.xcl" 
 }
 else
 {
-& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "C:\Users\19071_000\Desktop\K60_Car\program\program\iar\settings\program_K60DZ10.RAM.general.xcl" --debug_file=$debugfile --backend -f "C:\Users\19071_000\Desktop\K60_Car\program\program\iar\settings\program_K60DZ10.RAM.driver.xcl" 
+& "C:\Program Files (x86)\IAR Systems\Embedded Workbench 8.0\common\bin\cspybat" -f "F:\新建文件夹\K60_Car\program\program\iar\settings\program_K60DZ10.RAM.general.xcl" --debug_file=$debugfile --backend -f "F:\新建文件夹\K60_Car\program\program\iar\settings\program_K60DZ10.RAM.driver.xcl" 
 }
